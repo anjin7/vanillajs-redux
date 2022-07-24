@@ -1,20 +1,16 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { actionCreators } from "../store";
+import { connect } from "react-redux";
+import { add } from "../store";
 import ToDo from "../components/ToDo";
 
-function Home() {
+function Home({ toDos, addToDo }) {
   const [text, setText] = useState("");
-  const toDo = useSelector((state) => state);
-  const dispatch = useDispatch();
-
   function onChange(e) {
     setText(e.target.value);
   }
   function onSubmit(e) {
     e.preventDefault();
-    console.log(text);
-    dispatch(actionCreators.addToDo(text));
+    addToDo(text);
     setText("");
   }
   return (
@@ -25,7 +21,7 @@ function Home() {
         <button>Add</button>
       </form>
       <ul>
-        {toDo.map(toDo => (
+        {toDos.map(toDo => (
           <ToDo {...toDo} key={toDo.id} />
         ))}
       </ul>
@@ -33,4 +29,14 @@ function Home() {
   );
 }
 
-export default Home;
+function mapStateToProps(state) {
+  return { toDos: state };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    addToDo: text => dispatch(add(text))
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
